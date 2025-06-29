@@ -1,28 +1,47 @@
-# Create T3 App
+# Vibify 🤝 Spotify
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-## What's next? How do I make an app with this?
+## How do I use this?
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+If you want to fork this repo and start running it locally you'll need to do something to get yourself up and running:
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+### Setup
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+Create a `.env.local`
 
-## Learn More
+You'll need to create an application of the Spotify developer dashboard https://developer.spotify.com/ and add the client secret and ID you're given into your `.env.local` which should look something like this:
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+```
+AUTH_SECRET=ABCDEF
+SPOTIFY_CLIENT_ID=XXX
+SPOTIFY_CLIENT_SECRET=YYY
+NEXTAUTH_URL=X_ngrokUrl_X (we'll come back to this)
+```
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+Since 2023, Spotify have prevented the use of 'localhost' in their Redirect URI whitelisting. As a result of both this and the combination of NextAuth's persistance to inherit 'localhost' over '127.0.0.1' which caused me hours of pain - you have to use an alternative. I'd recommend tunneling your local dev via 'ngrok'.
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+### Installation
+
+- Create an account on ngroks website, this is needed to get your access token.
+
+`brew install ngrok`
+
+Once you have installed it and got your access token you'll need to run:
+
+`ngrok config add-authtoken <your-auth-token>`
+
+### Usage
+
+Once this has been done you'll want to start a local ngrok tunnel:
+
+`ngrok http 3000`
+
+This will output a URL for you that you'll want to put into you `.env.local` as the value of the `NEXTAUTH_URL` key. Similtanously, you'll also need to add this into the Spotify developer dashboard as a whitelisted Redirect URI (sadly you'll have to update your .env.local and Spotify Redirect URI on their dashboard each time you start a new ngrok terminal which isn't ideal but it's all I could get to work) here is an example of one of my expired redirects:
+
+https://6d0e-2a09-bac1-800-54b0-00-55-59.ngrok-free.app/api/auth/callback/spotify
+
+^ Yes you'll need to keep those suffix dirs due to how I've setup the Next.js routing.
 
 ## How do I deploy this?
 
