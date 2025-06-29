@@ -7,11 +7,13 @@ import SpotifyProvider from "next-auth/providers/spotify";
  * @see https://next-auth.js.org/configuration/options
  */
 export const authConfig = {
+  debug: true,
   providers: [
     SpotifyProvider({
-      clientId: process.env.SPOTIFY_CLIENT_ID,
-      clientSecret: process.env.SPOTIFY_CLIENT_SECRET
-    })
+      clientId: process.env.SPOTIFY_CLIENT_ID!,
+      clientSecret: process.env.SPOTIFY_CLIENT_SECRET!,
+    }),
+    
   ],
   callbacks: {
     session: ({ session, token }) => ({
