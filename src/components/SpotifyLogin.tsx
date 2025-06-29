@@ -23,13 +23,6 @@ export function SpotifyLogin() {
     }
   }, [status]);
 
-  // Log the access token when user is logged in
-  useEffect(() => {
-    if (session?.user) {
-        console.log("Session user: ", session.user);
-    }
-  }, [session]);
-
   if (status === "loading") {
     return (
       <div className="flex items-center justify-center">
@@ -57,15 +50,6 @@ export function SpotifyLogin() {
               </p>
             </div>
           </div>
-          
-          {/* {session.user.accessToken && (
-            <div className="mb-4 p-3 bg-black/20 rounded-lg">
-              <p className="text-xs text-gray-300 mb-2">Access Token:</p>
-              <p className="text-xs text-green-400 font-mono break-all">
-                {session.user.accessToken.substring(0, 50)}...
-              </p>
-            </div>
-          )} */}
           
           <button
             onClick={handleSignOut}

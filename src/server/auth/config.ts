@@ -1,19 +1,18 @@
 import { type NextAuthConfig } from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
 
-/**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
- *
- * @see https://next-auth.js.org/configuration/options
- */
 export const authConfig = {
-  debug: true,
   providers: [
     SpotifyProvider({
       clientId: process.env.SPOTIFY_CLIENT_ID!,
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET!,
+      authorization: {
+        url: "https://accounts.spotify.com/authorize",
+        params: {
+          scope: "user-read-email user-read-private user-top-read",
+        },
+      },
     }),
-    
   ],
   callbacks: {
     session: ({ session, token }) => ({
