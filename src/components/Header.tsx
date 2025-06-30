@@ -1,47 +1,41 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
-import { useState } from "react";
+import { Button } from "vib/components/ui/button";
+import { LogOut, Play } from "lucide-react";
+import { signOut } from "next-auth/react";
 
-export function Header() {
-  const { data: session } = useSession();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSignOut = async () => {
-    setIsLoading(true);
+export const Header = () => {
+  const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
   };
 
   return (
-    <header className="bg-white/10 backdrop-blur-sm border-b border-white/20 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+    <header className="border-b border-gray-800 bg-black">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="group relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-500/25">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-300/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <Play className="relative z-10 h-5 w-5 transform text-black transition-transform duration-300 group-hover:scale-110" />
+              </div>
+              <div className="absolute -top-1 -right-1 h-3 w-3 animate-ping rounded-full bg-emerald-400" />
+            </div>
+            <h1 className="bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-2xl font-black text-transparent">
               Vibify
             </h1>
           </div>
 
-          {/* User menu */}
-          <div className="flex items-center space-x-4">
-            {session?.user && (
-              <div className="flex items-center space-x-3">
-                <div className="text-sm text-gray-300">
-                  <span className="font-medium">{session.user.name}</span>
-                </div>
-                <button
-                  onClick={handleSignOut}
-                  disabled={isLoading}
-                  className="bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                >
-                  {isLoading ? "Signing out..." : "Sign Out"}
-                </button>
-              </div>
-            )}
-          </div>
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="border-gray-700 bg-gray-900 transition-all duration-300 hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
         </div>
       </div>
     </header>
   );
-} 
+};
