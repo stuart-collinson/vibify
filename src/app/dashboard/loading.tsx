@@ -1,7 +1,7 @@
 import { Skeleton } from "vib/components/ui/skeleton";
 import { User, Music, BarChart3 } from "lucide-react";
 
-export default function DashboardLoading() {
+const DashboardLoading = () => {
   return (
     <div className="animate-in fade-in duration-1000">
       <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -90,4 +90,6 @@ export default function DashboardLoading() {
       </div>
     </div>
   );
-}
+};
+
+export default DashboardLoading;

@@ -3,6 +3,7 @@
 import { Button } from "vib/components/ui/button";
 import { LogOut, Play } from "lucide-react";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 export const Header = () => {
   const handleLogout = async () => {
@@ -13,7 +14,7 @@ export const Header = () => {
     <header className="border-b border-gray-800 bg-black">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link href="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-200">
             <div className="relative">
               <div className="group relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-500/25">
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-300/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
@@ -24,7 +25,7 @@ export const Header = () => {
             <h1 className="bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-2xl font-black text-transparent">
               Vibify
             </h1>
-          </div>
+          </Link>
 
           <Button
             onClick={handleLogout}

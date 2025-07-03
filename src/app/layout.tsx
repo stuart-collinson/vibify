@@ -4,6 +4,7 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import { Providers } from "vib/components/Providers";
+import { ErrorBoundary } from "vib/components/ErrorBoundary";
 
 export const metadata: Metadata = {
   title: "Vibify - Your Spotify Music Companion",
@@ -22,7 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`}>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
+        </Providers>
       </body>
     </html>
   );

@@ -2,6 +2,7 @@
 
 import { ExternalLink, Music } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import type { Song } from "vib/types/spotify/songs";
 
 type QuickViewSongsProps = {
@@ -9,11 +10,20 @@ type QuickViewSongsProps = {
 };
 
 export const QuickViewSongs = ({ songs }: QuickViewSongsProps) => {
+  const router = useRouter();
+
+  const handlePanelClick = () => {
+    router.push("/songs");
+  };
+
   return (
-    <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/30">
+    <div 
+      className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 transition-all duration-300 hover:border-emerald-500/30 cursor-pointer"
+      onClick={handlePanelClick}
+    >
       <div className="mb-6 flex items-center gap-2">
         <Music className="h-6 w-6 text-emerald-400" />
-        <h2 className="text-2xl font-bold text-white">Top 5 Songs</h2>
+        <h2 className="text-2xl font-bold text-white">Top 5 Current Songs</h2>
       </div>
 
       <div className="space-y-4">
@@ -22,6 +32,7 @@ export const QuickViewSongs = ({ songs }: QuickViewSongsProps) => {
             key={index}
             className="group flex items-center justify-between rounded-xl bg-black/30 p-4 transition-all duration-300 hover:bg-black/50"
             style={{ animationDelay: `${index * 0.1}s` }}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-4">
               <div className="flex h-8 w-8 items-center justify-center rounded-full border border-emerald-500/30 bg-gradient-to-br from-emerald-400/20 to-emerald-600/20">
@@ -44,6 +55,7 @@ export const QuickViewSongs = ({ songs }: QuickViewSongsProps) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-xs text-emerald-400/60 transition-colors duration-200 hover:text-emerald-300"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <ExternalLink className="h-3 w-3" />
                   Spotify

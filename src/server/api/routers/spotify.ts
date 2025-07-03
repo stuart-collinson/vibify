@@ -38,7 +38,16 @@ const spotifyApiRequest = async <T>(
       string,
       unknown
     >;
-    console.error("Spotify API error response:", errorData);
+    
+    // Check for token expiration (401 Unauthorized)
+    if (response.status === 401) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Access token expired. Please log in again.",
+        cause: errorData,
+      });
+    }
+    
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: `Spotify API error: ${response.status} ${response.statusText}`,
