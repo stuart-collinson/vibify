@@ -20,7 +20,7 @@ export type TopArtistsResponse = {
   items: SpotifyArtist[];
 };
 
-export type CleanArtist = {
+export type Artist = {
   id: string;
   name: string;
   images: ArtistImage[];
@@ -37,7 +37,7 @@ export const GetTopArtistsInput = z.object({
 });
 
 export interface TopArtistsResult {
-  artists: CleanArtist[];
+  artists: Artist[];
 }
 
 export type GetTopArtistsInputType = z.infer<typeof GetTopArtistsInput>;

@@ -1,19 +1,10 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import { QuickViewArtists } from "vib/components/dashboard/QuickViewArtists";
 import { QuickViewSongs } from "vib/components/dashboard/QuickViewSongs";
 import { StatsGrid } from "vib/components/dashboard/StatsGrid";
+import { api } from "vib/trpc/server";
 
 // Mock data
 const mockData = {
-  artists: [
-    { name: "The Weeknd", plays: "2,847", genre: "R&B" },
-    { name: "Billie Eilish", plays: "1,923", genre: "Pop" },
-    { name: "Travis Scott", plays: "1,654", genre: "Hip-Hop" },
-    { name: "Dua Lipa", plays: "1,287", genre: "Pop" },
-    { name: "Post Malone", plays: "1,156", genre: "Hip-Hop" },
-  ],
   songs: [
     { title: "Blinding Lights", artist: "The Weeknd", plays: "847" },
     { title: "bad guy", artist: "Billie Eilish", plays: "623" },
@@ -29,20 +20,23 @@ const mockData = {
   },
 };
 
-export default function Dashboard() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+export default async function Dashboard() {
+  const [artistResponse, songResponse] = await Promise.all([
+    api.spotify.getTopArtists({
+      limit: 5,
+      timeRange: "long_term",
+    }),
+    api.spotify.getTopSongs({
+      limit: 5,
+      timeRange: "long_term",
+    }),
+  ]);
 
   return (
-    <div
-      className={`transition-all duration-1000 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}
-    >
+    <div className="animate-in fade-in duration-1000">
       <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <QuickViewArtists artists={mockData.artists} />
-        <QuickViewSongs songs={mockData.songs} />
+        <QuickViewArtists artists={artistResponse.artists ?? []} />
+        <QuickViewSongs songs={songResponse.songs ?? []} />
       </div>
 
       <StatsGrid stats={mockData.stats} />
