@@ -63,5 +63,3 @@ export const GetTopSongsInput = z.object({
 export interface TopSongsResult {
   songs: Song[];
 }
-
-export type GetTopSongsInputType = z.infer<typeof GetTopSongsInput>;

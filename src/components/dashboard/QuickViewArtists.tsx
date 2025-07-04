@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, User, Users, Music, ArrowRight } from "lucide-react";
+import { ExternalLink, User, Users, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { api } from "vib/trpc/react";
@@ -22,7 +22,7 @@ export const QuickViewArtists = ({ artists }: QuickViewArtistsProps) => {
       utils.artists.getTopArtists.prefetch({
         limit: 50,
         timeRange,
-      })
+      }),
     );
 
     void Promise.all(prefetchPromises).then(() => {
@@ -35,11 +35,13 @@ export const QuickViewArtists = ({ artists }: QuickViewArtistsProps) => {
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <User className="h-6 w-6 text-emerald-400" />
-          <h2 className="text-xl font-bold text-white sm:text-2xl">Top 5 Current Artists</h2>
+          <h2 className="text-xl font-bold text-white sm:text-2xl">
+            Top 5 Current Artists
+          </h2>
         </div>
         <Button
           onClick={handlePanelClick}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600"
+          className="border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700"
           size="sm"
         >
           View All

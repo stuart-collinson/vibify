@@ -8,14 +8,16 @@ import { Skeleton } from "vib/components/ui/skeleton";
 import type { TimeRange } from "vib/types/global";
 import { useSearchParams } from "next/navigation";
 
-export function ArtistsClient() {
+export const ArtistsClient = () => {
   const searchParams = useSearchParams();
-  const timeRange = (searchParams.get("timeRange") as TimeRange) ?? "short_term";
+  const timeRange =
+    (searchParams.get("timeRange") as TimeRange) ?? "short_term";
 
-  const { data: artistResponse, isLoading } = api.artists.getTopArtists.useQuery({
-    limit: 50,
-    timeRange,
-  });
+  const { data: artistResponse, isLoading } =
+    api.artists.getTopArtists.useQuery({
+      limit: 50,
+      timeRange,
+    });
 
   if (isLoading) {
     return (
@@ -52,11 +54,8 @@ export function ArtistsClient() {
       <TimeRangeButtons currentTimeRange={timeRange} />
 
       <div className="mt-8">
-        <ArtistsTable 
-          key={timeRange}
-          artists={artistResponse?.artists ?? []} 
-        />
+        <ArtistsTable key={timeRange} artists={artistResponse?.artists ?? []} />
       </div>
     </div>
   );
-} 
+};

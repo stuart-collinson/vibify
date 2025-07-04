@@ -4,7 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import { TRPCReactProvider } from "vib/trpc/react";
 import { InitialLoadingScreen } from "./InitialLoadingScreen";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <SessionProvider>
       <TRPCReactProvider>
@@ -13,4 +13,4 @@ export function Providers({ children }: { children: React.ReactNode }) {
       </TRPCReactProvider>
     </SessionProvider>
   );
-} 
+};

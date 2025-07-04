@@ -87,6 +87,3 @@ export interface TopArtistsResult {
 export interface ArtistDetailsResult {
   artist: ArtistDetails;
 }
-
-export type GetTopArtistsInputType = z.infer<typeof GetTopArtistsInput>;
-export type GetArtistDetailsInputType = z.infer<typeof GetArtistDetailsInput>;

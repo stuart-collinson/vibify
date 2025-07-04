@@ -9,7 +9,7 @@ export const authConfig = {
       authorization: {
         url: "https://accounts.spotify.com/authorize",
         params: {
-          scope: "user-read-email user-read-private user-top-read",
+          scope: "user-read-email user-read-private user-top-read playlist-read-private playlist-read-collaborative user-library-read",
         },
       },
     }),

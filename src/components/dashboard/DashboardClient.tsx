@@ -2,36 +2,38 @@
 
 import { QuickViewArtists } from "vib/components/dashboard/QuickViewArtists";
 import { QuickViewSongs } from "vib/components/dashboard/QuickViewSongs";
-import { StatsGrid } from "vib/components/dashboard/StatsGrid";
+import { WelcomeMessage } from "vib/components/dashboard/WelcomeMessage";
 import { api } from "vib/trpc/react";
 import { Skeleton } from "vib/components/ui/skeleton";
-
-// Mock data for stats
-const mockData = {
-  stats: {
-    likedSongs: "1,247",
-    hoursListened: "342",
-    newDiscoveries: "89",
-    playlists: "23",
-  },
-};
+import { useSession } from "next-auth/react";
 
 export function DashboardClient() {
-  const { data: artistResponse, isLoading: artistsLoading } = api.artists.getTopArtists.useQuery({
-    limit: 5,
-    timeRange: "long_term",
-  });
+  const { data: session } = useSession();
+  const { name: usersName, image: usersImage } = session?.user ?? {};
 
-  const { data: songResponse, isLoading: songsLoading } = api.songs.getTopSongs.useQuery({
-    limit: 5,
-    timeRange: "long_term",
-  });
+  const { data: artistResponse, isLoading: artistsLoading } =
+    api.artists.getTopArtists.useQuery({
+      limit: 5,
+      timeRange: "long_term",
+    });
 
-  const isLoading = artistsLoading || songsLoading;
+  const { data: songResponse, isLoading: songsLoading } =
+    api.songs.getTopSongs.useQuery({
+      limit: 5,
+      timeRange: "long_term",
+    });
+
+  const { data: playlistsResponse, isLoading: playlistsLoading } =
+    api.playlists.getPlaylistCount.useQuery();
+
+  const isLoading = artistsLoading || songsLoading || playlistsLoading;
 
   if (isLoading) {
     return (
       <div className="animate-in fade-in duration-1000">
+        <div className="mb-8">
+          <Skeleton className="h-12 w-64" />
+        </div>
         <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
           <div className="space-y-4">
             <Skeleton className="h-8 w-48" />
@@ -61,12 +63,16 @@ export function DashboardClient() {
 
   return (
     <div className="animate-in fade-in duration-1000">
+      <WelcomeMessage
+        name={usersName}
+        image={usersImage}
+        playlistsCount={playlistsResponse?.count}
+      />
+
       <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
         <QuickViewArtists artists={artistResponse?.artists ?? []} />
         <QuickViewSongs songs={songResponse?.songs ?? []} />
       </div>
-
-      <StatsGrid stats={mockData.stats} />
     </div>
   );
-} 
+}

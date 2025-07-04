@@ -6,7 +6,7 @@ import { api } from "vib/trpc/react";
 import { AnimatedLogo } from "vib/components/ui/animated-logo";
 import { DEFAULT_TIME_RANGES } from "vib/lib/constants";
 
-export function InitialLoadingScreen() {
+export const InitialLoadingScreen = () => {
   const { data: session, status } = useSession();
   const [isPrefetching, setIsPrefetching] = useState(false);
   const utils = api.useUtils();
@@ -69,4 +69,4 @@ export function InitialLoadingScreen() {
   }
 
   return null;
-}
+};

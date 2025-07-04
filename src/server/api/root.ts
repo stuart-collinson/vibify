@@ -1,5 +1,6 @@
 import { artistsRouter } from "vib/server/api/routers/artists";
 import { generalRouter } from "vib/server/api/routers/general";
+import { playlistsRouter } from "vib/server/api/routers/playlists";
 import { songsRouter } from "vib/server/api/routers/songs";
 import { createCallerFactory, createTRPCRouter } from "vib/server/api/trpc";
 
@@ -11,6 +12,7 @@ import { createCallerFactory, createTRPCRouter } from "vib/server/api/trpc";
 export const appRouter = createTRPCRouter({
   general: generalRouter,
   artists: artistsRouter,
+  playlists: playlistsRouter,
   songs: songsRouter,
 });
 

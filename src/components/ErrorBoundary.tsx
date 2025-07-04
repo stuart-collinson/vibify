@@ -25,12 +25,14 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: { componentStack: string }) {
+  componentDidCatch(error: Error, _errorInfo: { componentStack: string }) {
     // Check if it's a token expiration error (401 Unauthorized)
-    if (error.message.includes("401") || 
-        error.message.includes("UNAUTHORIZED") ||
-        error.message.includes("token") ||
-        error.message.includes("expired")) {
+    if (
+      error.message.includes("401") ||
+      error.message.includes("UNAUTHORIZED") ||
+      error.message.includes("token") ||
+      error.message.includes("expired")
+    ) {
       // Log out the user for token expiration
       void signOut({ callbackUrl: "/" });
       return;
@@ -43,18 +45,18 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex min-h-screen items-center justify-center bg-black">
           <div className="text-center">
-            <RefreshCw className="mx-auto h-12 w-12 animate-spin text-emerald-400 mb-4" />
-            <h2 className="text-xl font-semibold text-white mb-2">
+            <RefreshCw className="mx-auto mb-4 h-12 w-12 animate-spin text-emerald-400" />
+            <h2 className="mb-2 text-xl font-semibold text-white">
               Loading your music data...
             </h2>
-            <p className="text-gray-400 mb-6">
+            <p className="mb-6 text-gray-400">
               Please wait while we fetch your latest listening data
             </p>
             <Button
               onClick={() => window.location.reload()}
-              className="bg-emerald-500 hover:bg-emerald-600 text-black"
+              className="bg-emerald-500 text-black hover:bg-emerald-600"
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
+              <RefreshCw className="mr-2 h-4 w-4" />
               Retry
             </Button>
           </div>
@@ -64,4 +66,4 @@ export class ErrorBoundary extends Component<Props, State> {
 
     return this.props.children;
   }
-} 
+}

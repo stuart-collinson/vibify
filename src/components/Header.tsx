@@ -34,6 +34,7 @@ export const Header = () => {
               </div>
               <div className="absolute -top-1 -right-1 h-3 w-3 animate-ping rounded-full bg-emerald-400" />
             </div>
+
             <h1 className="bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-3xl font-black text-transparent">
               Vibify
             </h1>
@@ -49,6 +50,7 @@ export const Header = () => {
             <LogOut
               className={`h-4 w-4 ${isLoggingOut ? "animate-spin" : ""}`}
             />
+
             <span className="hidden sm:inline">
               {isLoggingOut ? "Signing out..." : "Sign out"}
             </span>

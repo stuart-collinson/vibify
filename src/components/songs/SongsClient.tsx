@@ -8,9 +8,10 @@ import { Skeleton } from "vib/components/ui/skeleton";
 import type { TimeRange } from "vib/types/global";
 import { useSearchParams } from "next/navigation";
 
-export function SongsClient() {
+export const SongsClient = () => {
   const searchParams = useSearchParams();
-  const timeRange = (searchParams.get("timeRange") as TimeRange) ?? "short_term";
+  const timeRange =
+    (searchParams.get("timeRange") as TimeRange) ?? "short_term";
 
   const { data: songResponse, isLoading } = api.songs.getTopSongs.useQuery({
     limit: 50,
@@ -52,11 +53,8 @@ export function SongsClient() {
       <TimeRangeButtons currentTimeRange={timeRange} />
 
       <div className="mt-8">
-        <SongsTable 
-          key={timeRange}
-          songs={songResponse?.songs ?? []} 
-        />
+        <SongsTable key={timeRange} songs={songResponse?.songs ?? []} />
       </div>
     </div>
   );
-} 
+};
