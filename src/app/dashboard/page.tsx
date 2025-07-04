@@ -22,11 +22,11 @@ const mockData = {
 
 export default async function Dashboard() {
   const [artistResponse, songResponse] = await Promise.all([
-    api.spotify.getTopArtists({
+    api.artists.getTopArtists({
       limit: 5,
       timeRange: "long_term",
     }),
-    api.spotify.getTopSongs({
+    api.songs.getTopSongs({
       limit: 5,
       timeRange: "long_term",
     }),

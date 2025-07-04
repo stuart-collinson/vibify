@@ -1,4 +1,6 @@
-import { spotifyRouter } from "vib/server/api/routers/spotify";
+import { artistsRouter } from "vib/server/api/routers/artists";
+import { generalRouter } from "vib/server/api/routers/general";
+import { songsRouter } from "vib/server/api/routers/songs";
 import { createCallerFactory, createTRPCRouter } from "vib/server/api/trpc";
 
 /**
@@ -7,7 +9,9 @@ import { createCallerFactory, createTRPCRouter } from "vib/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  spotify: spotifyRouter,
+  general: generalRouter,
+  artists: artistsRouter,
+  songs: songsRouter,
 });
 
 // export type definition of API

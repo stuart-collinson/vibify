@@ -1,5 +1,6 @@
 import { SongsTable } from "vib/components/songs/SongsTable";
 import { TimeRangeButtons } from "vib/components/songs/TimeRangeButtons";
+import { BackButton } from "vib/components/songs/BackButton";
 import { api } from "vib/trpc/server";
 import type { TimeRange } from "vib/types/global";
 
@@ -10,7 +11,7 @@ export default async function SongsPage({
 }) {
   const timeRange = searchParams.timeRange ?? "short_term";
 
-  const songResponse = await api.spotify.getTopSongs({
+  const songResponse = await api.songs.getTopSongs({
     limit: 50,
     timeRange,
   });
@@ -18,7 +19,10 @@ export default async function SongsPage({
   return (
     <div className="animate-in fade-in duration-1000">
       <div className="mb-8">
-        <h1 className="mb-2 text-4xl font-bold text-white">Your Top Songs</h1>
+        <div className="mb-4 flex items-center gap-4">
+          <BackButton />
+          <h1 className="text-3xl font-bold text-white">Your Top Songs</h1>
+        </div>
         <p className="text-gray-400">Discover your most listened to songs</p>
       </div>
 
