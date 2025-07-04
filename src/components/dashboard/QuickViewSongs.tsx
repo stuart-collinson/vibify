@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { Song } from "vib/types/spotify/songs";
 import { Button } from "vib/components/ui/button";
+import { api } from "vib/trpc/react";
+import { DEFAULT_TIME_RANGES } from "vib/lib/constants";
 
 type QuickViewSongsProps = {
   songs: Song[];
@@ -12,9 +14,20 @@ type QuickViewSongsProps = {
 
 export const QuickViewSongs = ({ songs }: QuickViewSongsProps) => {
   const router = useRouter();
+  const utils = api.useUtils();
 
   const handlePanelClick = () => {
-    router.push("/songs");
+    // Prefetch all time ranges for songs before navigation
+    const prefetchPromises = DEFAULT_TIME_RANGES.map((timeRange) =>
+      utils.songs.getTopSongs.prefetch({
+        limit: 50,
+        timeRange,
+      })
+    );
+
+    void Promise.all(prefetchPromises).then(() => {
+      router.push("/songs");
+    });
   };
 
   return (

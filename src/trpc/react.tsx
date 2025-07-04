@@ -18,9 +18,7 @@ const getQueryClient = () => {
 };
 
 export const api = createTRPCReact<AppRouter>();
-
 export type RouterInputs = inferRouterInputs<AppRouter>;
-
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
@@ -41,6 +39,12 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             const headers = new Headers();
             headers.set("x-trpc-source", "nextjs-react");
             return headers;
+          },
+          fetch: (url, options) => {
+            return fetch(url, {
+              ...options,
+              signal: AbortSignal.timeout(10000),
+            });
           },
         }),
       ],

@@ -41,6 +41,17 @@ export type Song = {
   spotifyUrl: string;
 };
 
+export type SongsTableProps = {
+  songs: Song[];
+};
+
+export type SongCardProps = {
+  song: Song;
+  rank: number;
+  getPopularityColor: (popularity: number) => string;
+  getPopularityStars: (popularity: number) => React.ReactElement[];
+};
+
 // Schemas
 export const GetTopSongsInput = z.object({
   limit: z.number().min(1).max(50).default(10),

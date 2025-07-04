@@ -1,8 +1,6 @@
 import "vib/styles/globals.css";
-
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-
 import { Providers } from "vib/components/Providers";
 import { ErrorBoundary } from "vib/components/ErrorBoundary";
 

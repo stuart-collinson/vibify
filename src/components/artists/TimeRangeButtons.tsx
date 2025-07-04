@@ -1,12 +1,13 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { cn } from "vib/lib/utils";
 import { Button } from "vib/components/ui/button";
+import { cn } from "vib/lib/utils";
+import { useRouter, useSearchParams } from "next/navigation";
+import { api } from "vib/trpc/react";
 import type { TimeRange } from "vib/types/global";
 
 type TimeRangeButtonsProps = {
-  currentTimeRange: TimeRange;
+  currentTimeRange: string;
 };
 
 const timeRangeOptions = [
@@ -20,8 +21,14 @@ export const TimeRangeButtons = ({
 }: TimeRangeButtonsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const utils = api.useUtils();
 
   const handleTimeRangeChange = (timeRange: string) => {
+    void utils.artists.getTopArtists.prefetch({
+      limit: 50,
+      timeRange: timeRange as TimeRange,
+    });
+
     const params = new URLSearchParams(searchParams);
     params.set("timeRange", timeRange);
     router.push(`/artists?${params.toString()}`);

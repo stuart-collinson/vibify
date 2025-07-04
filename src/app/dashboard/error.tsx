@@ -4,11 +4,7 @@ import { useEffect } from "react";
 import { signOut } from "next-auth/react";
 import { RefreshCw } from "lucide-react";
 import { Button } from "vib/components/ui/button";
-
-interface DashboardErrorProps {
-  error: Error & { digest?: string };
-  reset: () => void;
-}
+import type { DashboardErrorProps } from "vib/types/dashboard";
 
 const DashboardError = ({ error, reset }: DashboardErrorProps) => {
   useEffect(() => {
@@ -36,13 +32,11 @@ const DashboardError = ({ error, reset }: DashboardErrorProps) => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
         <div className="text-center">
-          <RefreshCw className="mx-auto h-12 w-12 animate-spin text-emerald-400 mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">
+          <RefreshCw className="mx-auto mb-4 h-12 w-12 animate-spin text-emerald-400" />
+          <h2 className="mb-2 text-xl font-semibold text-white">
             Refreshing your session...
           </h2>
-          <p className="text-gray-400">
-            Redirecting you to login
-          </p>
+          <p className="text-gray-400">Redirecting you to login</p>
         </div>
       </div>
     );
@@ -52,18 +46,18 @@ const DashboardError = ({ error, reset }: DashboardErrorProps) => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-black">
       <div className="text-center">
-        <RefreshCw className="mx-auto h-12 w-12 animate-spin text-emerald-400 mb-4" />
-        <h2 className="text-xl font-semibold text-white mb-2">
+        <RefreshCw className="mx-auto mb-4 h-12 w-12 animate-spin text-emerald-400" />
+        <h2 className="mb-2 text-xl font-semibold text-white">
           Loading your music data...
         </h2>
-        <p className="text-gray-400 mb-6">
+        <p className="mb-6 text-gray-400">
           Please wait while we fetch your latest listening data
         </p>
         <Button
           onClick={reset}
-          className="bg-emerald-500 hover:bg-emerald-600 text-black"
+          className="bg-emerald-500 text-black hover:bg-emerald-600"
         >
-          <RefreshCw className="h-4 w-4 mr-2" />
+          <RefreshCw className="mr-2 h-4 w-4" />
           Retry
         </Button>
       </div>
@@ -71,4 +65,4 @@ const DashboardError = ({ error, reset }: DashboardErrorProps) => {
   );
 };
 
-export default DashboardError; 
+export default DashboardError;

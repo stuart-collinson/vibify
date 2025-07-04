@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { api } from "vib/trpc/react";
 import type { Artist } from "vib/types/spotify/artists";
 import { Button } from "vib/components/ui/button";
+import { DEFAULT_TIME_RANGES } from "vib/lib/constants";
 
 type QuickViewArtistsProps = {
   artists: Artist[];
@@ -13,9 +14,20 @@ type QuickViewArtistsProps = {
 
 export const QuickViewArtists = ({ artists }: QuickViewArtistsProps) => {
   const router = useRouter();
+  const utils = api.useUtils();
 
   const handlePanelClick = () => {
-    router.push("/artists");
+    // Prefetch all time ranges for artists before navigation
+    const prefetchPromises = DEFAULT_TIME_RANGES.map((timeRange) =>
+      utils.artists.getTopArtists.prefetch({
+        limit: 50,
+        timeRange,
+      })
+    );
+
+    void Promise.all(prefetchPromises).then(() => {
+      router.push("/artists");
+    });
   };
 
   return (

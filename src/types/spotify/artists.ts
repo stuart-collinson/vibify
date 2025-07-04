@@ -56,6 +56,18 @@ export type ArtistDetails = {
   uri: string;
 };
 
+export type ArtistsTableProps = {
+  artists: Artist[];
+};
+
+export type ArtistCardProps = {
+  artist: Artist;
+  rank: number;
+  formatFollowers: (followers: number) => string;
+  getPopularityColor: (popularity: number) => string;
+  getPopularityStars: (popularity: number) => React.ReactElement[];
+};
+
 // Schemas
 export const GetTopArtistsInput = z.object({
   limit: z.number().min(1).max(50).default(10),

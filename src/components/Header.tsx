@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "vib/components/ui/button";
-import { LogOut, User, Settings, Play } from "lucide-react";
+import { LogOut, Play } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -14,6 +14,7 @@ export const Header = () => {
     try {
       await signOut({ callbackUrl: "/" });
     } catch (error) {
+      console.error(error);
       setIsLoggingOut(false);
     }
   };
@@ -38,7 +39,6 @@ export const Header = () => {
             </h1>
           </Link>
 
-          {/* Logout Button */}
           <Button
             onClick={handleLogout}
             disabled={isLoggingOut}
