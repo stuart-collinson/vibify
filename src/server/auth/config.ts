@@ -30,4 +30,20 @@ export const authConfig = {
       return token;
     },
   },
+  // Add debug logging in development
+  debug: process.env.NODE_ENV === "development",
+  // Add better error handling
+  logger: {
+    error(code, ...message) {
+      console.error(`[AUTH ERROR] ${code}:`, ...message);
+    },
+    warn(code, ...message) {
+      console.warn(`[AUTH WARN] ${code}:`, ...message);
+    },
+    debug(code, ...message) {
+      if (process.env.NODE_ENV === "development") {
+        console.log(`[AUTH DEBUG] ${code}:`, ...message);
+      }
+    },
+  },
 } satisfies NextAuthConfig;
