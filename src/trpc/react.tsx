@@ -8,6 +8,8 @@ import { useState } from "react";
 import SuperJSON from "superjson";
 import { type AppRouter } from "vib/server/api/root";
 import { createQueryClient } from "./query-client";
+import { toast } from "sonner";
+import { signOut } from "next-auth/react";
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
 
@@ -50,6 +52,48 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
       ],
     }),
   );
+
+  useState(() => {
+    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+      if (
+        event?.type === "updated" &&
+        event.query.state.status === "error" &&
+        event.query.state.error
+      ) {
+        const error = event.query.state.error as { data?: { code?: string } };
+        const errorCode = error?.data?.code;
+
+        // Handle authentication errors
+        if (errorCode === "UNAUTHORIZED") {
+          toast.error("Session expired. Please log in again.");
+          void signOut({ callbackUrl: "/" });
+          return;
+        }
+
+        // Handle forbidden errors
+        if (errorCode === "FORBIDDEN") {
+          toast.error(
+            "Access denied. You may not have the required permissions.",
+          );
+          void signOut({ callbackUrl: "/" });
+          return;
+        }
+
+        // Handle rate limiting
+        if (errorCode === "TOO_MANY_REQUESTS") {
+          toast.error(
+            "Rate limit exceeded. Please try again in a few minutes.",
+          );
+          return;
+        }
+
+        // Handle other errors silently (they'll be handled by individual components)
+        console.warn("Unhandled tRPC error:", error);
+      }
+    });
+
+    return unsubscribe;
+  });
 
   return (
     <QueryClientProvider client={queryClient}>

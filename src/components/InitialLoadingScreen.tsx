@@ -29,19 +29,10 @@ export const InitialLoadingScreen = () => {
           }),
         ]);
 
-        promises.push(
-          utils.artists.getTopArtists.prefetch({
-            limit: 5,
-            timeRange: "long_term",
-          }),
-          utils.songs.getTopSongs.prefetch({
-            limit: 5,
-            timeRange: "long_term",
-          }),
-        );
+        promises.push(utils.playlists.getPlaylistCount.prefetch());
 
         try {
-          await Promise.all(promises);
+          await Promise.allSettled(promises);
         } catch (error) {
           console.warn("Failed to prefetch some data:", error);
         } finally {

@@ -2,12 +2,10 @@
 
 import { Component, type ReactNode } from "react";
 import { signOut } from "next-auth/react";
-import { RefreshCw } from "lucide-react";
-import { Button } from "vib/components/ui/button";
+import { toast } from "sonner";
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
 }
 
 interface State {
@@ -16,49 +14,73 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  public state: State = {
+    hasError: false,
+  };
 
-  static getDerivedStateFromError(error: Error): State {
+  public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, _errorInfo: { componentStack: string }) {
-    // Check if it's a token expiration error (401 Unauthorized)
+  public componentDidCatch(error: Error) {
+    console.error("ErrorBoundary caught an error:", error);
+
+    // Check if it's a tRPC error
+    if (error.message.includes("TRPC") || error.message.includes("tRPC")) {
+      toast.error(
+        "A connection error occurred. Please try refreshing the page.",
+      );
+      return;
+    }
+
+    // Check if it's a network error
+    if (error.message.includes("fetch") || error.message.includes("network")) {
+      toast.error("Network error. Please check your connection and try again.");
+      return;
+    }
+
+    // Check if it's an authentication error
     if (
       error.message.includes("401") ||
-      error.message.includes("UNAUTHORIZED") ||
-      error.message.includes("token") ||
-      error.message.includes("expired")
+      error.message.includes("UNAUTHORIZED")
     ) {
-      // Log out the user for token expiration
+      toast.error("Session expired. Please log in again.");
       void signOut({ callbackUrl: "/" });
       return;
     }
+
+    // Check if it's a forbidden error
+    if (error.message.includes("403") || error.message.includes("FORBIDDEN")) {
+      toast.error("Access denied. You may not have the required permissions.");
+      void signOut({ callbackUrl: "/" });
+      return;
+    }
+
+    // Generic error
+    toast.error("Something went wrong. Please try refreshing the page.");
   }
 
-  render() {
+  public render() {
     if (this.state.hasError) {
-      // For non-token errors, show a loading state instead of crashing
       return (
         <div className="flex min-h-screen items-center justify-center bg-black">
           <div className="text-center">
-            <RefreshCw className="mx-auto mb-4 h-12 w-12 animate-spin text-emerald-400" />
-            <h2 className="mb-2 text-xl font-semibold text-white">
-              Loading your music data...
-            </h2>
+            <h1 className="mb-4 text-2xl font-bold text-white">
+              Oops! Something went wrong
+            </h1>
             <p className="mb-6 text-gray-400">
-              Please wait while we fetch your latest listening data
+              We encountered an unexpected error. Please try refreshing the
+              page.
             </p>
-            <Button
-              onClick={() => window.location.reload()}
-              className="bg-emerald-500 text-black hover:bg-emerald-600"
+            <button
+              onClick={() => {
+                this.setState({ hasError: false, error: undefined });
+                window.location.reload();
+              }}
+              className="rounded-lg bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
             >
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Retry
-            </Button>
+              Refresh Page
+            </button>
           </div>
         </div>
       );

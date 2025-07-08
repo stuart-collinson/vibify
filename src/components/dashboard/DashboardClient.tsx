@@ -6,27 +6,42 @@ import { WelcomeMessage } from "vib/components/dashboard/WelcomeMessage";
 import { api } from "vib/trpc/react";
 import { Skeleton } from "vib/components/ui/skeleton";
 import { useSession } from "next-auth/react";
+import { useTrpcErrorHandler } from "vib/hooks/useTrpcErrorHandler";
 
-export function DashboardClient() {
+export const DashboardClient = () => {
   const { data: session } = useSession();
   const { name: usersName, image: usersImage } = session?.user ?? {};
 
-  const { data: artistResponse, isLoading: artistsLoading } =
-    api.artists.getTopArtists.useQuery({
-      limit: 5,
-      timeRange: "long_term",
-    });
+  const {
+    data: shortTermArtists,
+    isLoading: shortTermArtistsLoading,
+    error: shortTermArtistsError,
+  } = api.artists.getTopArtists.useQuery({
+    limit: 50,
+    timeRange: "short_term",
+  });
 
-  const { data: songResponse, isLoading: songsLoading } =
-    api.songs.getTopSongs.useQuery({
-      limit: 5,
-      timeRange: "long_term",
-    });
+  const {
+    data: shortTermSongs,
+    isLoading: shortTermSongsLoading,
+    error: shortTermSongsError,
+  } = api.songs.getTopSongs.useQuery({
+    limit: 50,
+    timeRange: "short_term",
+  });
 
-  const { data: playlistsResponse, isLoading: playlistsLoading } =
-    api.playlists.getPlaylistCount.useQuery();
+  const {
+    data: playlistsResponse,
+    isLoading: playlistsLoading,
+    error: playlistsError,
+  } = api.playlists.getPlaylistCount.useQuery();
 
-  const isLoading = artistsLoading || songsLoading || playlistsLoading;
+  useTrpcErrorHandler(shortTermArtistsError);
+  useTrpcErrorHandler(shortTermSongsError);
+  useTrpcErrorHandler(playlistsError);
+
+  const isLoading =
+    shortTermArtistsLoading || shortTermSongsLoading || playlistsLoading;
 
   if (isLoading) {
     return (
@@ -61,6 +76,9 @@ export function DashboardClient() {
     );
   }
 
+  const quickViewArtists = shortTermArtists?.artists?.slice(0, 5) ?? [];
+  const quickViewSongs = shortTermSongs?.songs?.slice(0, 5) ?? [];
+
   return (
     <div className="animate-in fade-in duration-1000">
       <WelcomeMessage
@@ -70,9 +88,9 @@ export function DashboardClient() {
       />
 
       <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <QuickViewArtists artists={artistResponse?.artists ?? []} />
-        <QuickViewSongs songs={songResponse?.songs ?? []} />
+        <QuickViewArtists artists={quickViewArtists} />
+        <QuickViewSongs songs={quickViewSongs} />
       </div>
     </div>
   );
-}
+};

@@ -7,16 +7,23 @@ import { api } from "vib/trpc/react";
 import { Skeleton } from "vib/components/ui/skeleton";
 import type { TimeRange } from "vib/types/global";
 import { useSearchParams } from "next/navigation";
+import { useTrpcErrorHandler } from "vib/hooks/useTrpcErrorHandler";
 
 export const SongsClient = () => {
   const searchParams = useSearchParams();
   const timeRange =
     (searchParams.get("timeRange") as TimeRange) ?? "short_term";
 
-  const { data: songResponse, isLoading } = api.songs.getTopSongs.useQuery({
+  const {
+    data: songResponse,
+    isLoading,
+    error,
+  } = api.songs.getTopSongs.useQuery({
     limit: 50,
     timeRange,
   });
+
+  useTrpcErrorHandler(error);
 
   if (isLoading) {
     return (

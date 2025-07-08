@@ -36,6 +36,43 @@ export const spotifyApiRequest = async <T>(
       });
     }
 
+    // Check for forbidden access (403 Forbidden)
+    if (response.status === 403) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message:
+          "Access forbidden. Your account may not have the required permissions.",
+        cause: errorData,
+      });
+    }
+
+    // Check for rate limiting (429 Too Many Requests)
+    if (response.status === 429) {
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: "Rate limit exceeded. Please try again later.",
+        cause: errorData,
+      });
+    }
+
+    // Handle other client errors (4xx)
+    if (response.status >= 400 && response.status < 500) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: `Spotify API error: ${response.status} ${response.statusText}`,
+        cause: errorData,
+      });
+    }
+
+    // Handle server errors (5xx)
+    if (response.status >= 500) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Spotify API server error: ${response.status} ${response.statusText}`,
+        cause: errorData,
+      });
+    }
+
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: `Spotify API error: ${response.status} ${response.statusText}`,
