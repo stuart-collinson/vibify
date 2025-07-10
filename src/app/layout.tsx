@@ -7,7 +7,7 @@ import { ErrorBoundary } from "vib/components/ErrorBoundary";
 export const metadata: Metadata = {
   title: "Vibify - Your Spotify Music Companion",
   description: "Connect your Spotify account to discover your favorite music",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/Vibify.png" }],
 };
 
 const geist = Geist({

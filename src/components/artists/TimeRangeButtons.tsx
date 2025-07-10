@@ -11,9 +11,9 @@ type TimeRangeButtonsProps = {
 };
 
 const timeRangeOptions = [
-  { value: "short_term", label: "Last month" },
-  { value: "medium_term", label: "Last 6 months" },
-  { value: "long_term", label: "All time" },
+  { value: "short_term", label: "Last month", shortLabel: "Month" },
+  { value: "medium_term", label: "Last 6 months", shortLabel: "6 Months" },
+  { value: "long_term", label: "All time", shortLabel: "All Time" },
 ] as const;
 
 export const TimeRangeButtons = ({
@@ -42,7 +42,7 @@ export const TimeRangeButtons = ({
           onClick={() => handleTimeRangeChange(option.value)}
           size="lg"
           className={cn(
-            "rounded-xl px-6 py-3 font-medium transition-all duration-200",
+            "flex-1 rounded-xl px-3 py-2 font-medium transition-all duration-200 sm:flex-none sm:px-6 sm:py-3",
             "border border-gray-700 hover:border-emerald-500/50",
             "bg-gray-900/50 hover:bg-gray-800/50",
             "text-gray-300 hover:text-white",
@@ -53,7 +53,8 @@ export const TimeRangeButtons = ({
             ],
           )}
         >
-          {option.label}
+          <span className="sm:hidden">{option.shortLabel}</span>
+          <span className="hidden sm:inline">{option.label}</span>
         </Button>
       ))}
     </div>
