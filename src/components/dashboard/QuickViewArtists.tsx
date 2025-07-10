@@ -1,11 +1,10 @@
 "use client";
 
-import { ExternalLink, User, Users, ArrowRight } from "lucide-react";
+import { ExternalLink, User, Users, Grid3X3 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { api } from "vib/trpc/react";
 import type { Artist } from "vib/types/spotify/artists";
-import { Button } from "vib/components/ui/button";
 import { DEFAULT_TIME_RANGES } from "vib/lib/constants";
 
 type QuickViewArtistsProps = {
@@ -39,14 +38,13 @@ export const QuickViewArtists = ({ artists }: QuickViewArtistsProps) => {
             Top 5 Current Artists
           </h2>
         </div>
-        <Button
+        <button
           onClick={handlePanelClick}
-          className="border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700"
-          size="sm"
+          className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400 transition-all duration-200 hover:bg-emerald-500/20 hover:text-emerald-300 active:scale-95"
+          aria-label="View all artists"
         >
-          View All
-          <ArrowRight className="h-4 w-4" />
-        </Button>
+          <Grid3X3 className="h-4 w-4" />
+        </button>
       </div>
 
       <div className="space-y-4">

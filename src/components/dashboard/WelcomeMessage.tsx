@@ -26,23 +26,23 @@ export const WelcomeMessage = ({
   const spiceyName = isEasterEggUser(name ?? "");
 
   return (
-    <div className="mb-8 flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <Avatar className="h-12 w-12">
+    <div className="mb-8 flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2 sm:gap-4">
+        <Avatar className="h-8 w-8 sm:h-12 sm:w-12">
           <AvatarImage src={image ?? ""} alt={name ?? "User"} />
           <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 font-semibold text-white">
             {initials}
           </AvatarFallback>
         </Avatar>
-        <div>
-          <h1 className="text-2xl font-bold">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xl font-bold sm:text-2xl">
             <span className="text-emerald-500">Hey, </span>
             <span className="text-white">{displayName}</span>
             <span className="text-emerald-500">
               !{spiceyName ? "!! 🎤" : null}
             </span>
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Here&apos;s your music listening overview
           </p>
         </div>

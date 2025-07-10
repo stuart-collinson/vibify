@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "vib/components/ui/button";
 import { LogOut, Play } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
@@ -40,21 +39,17 @@ export const Header = () => {
             </h1>
           </Link>
 
-          <Button
+          <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            variant="ghost"
-            size="default"
-            className="flex items-center gap-2 text-gray-300 transition-all duration-200 hover:bg-emerald-500/10 hover:text-emerald-400 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-300 transition-all duration-200 hover:bg-red-500/10 hover:text-red-400 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+            aria-label="Sign out"
           >
-            <LogOut
-              className={`h-4 w-4 ${isLoggingOut ? "animate-spin" : ""}`}
-            />
-
+            <LogOut className="h-4 w-4" />
             <span className="hidden sm:inline">
               {isLoggingOut ? "Signing out..." : "Sign out"}
             </span>
-          </Button>
+          </button>
         </div>
       </div>
     </header>
