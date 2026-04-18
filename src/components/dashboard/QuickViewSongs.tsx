@@ -47,7 +47,7 @@ export const QuickViewSongs = ({ songs }: QuickViewSongsProps) => {
 
       <div className="space-y-4">
         {songs.map((song, index) => (
-          <SongCard key={index} song={song} index={index} />
+          <SongCard key={song.id} song={song} index={index} />
         ))}
       </div>
     </div>

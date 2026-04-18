@@ -8,35 +8,36 @@ import type { TimeRange } from "vib/types/global";
 
 type TimeRangeButtonsProps = {
   currentTimeRange: string;
+  section: "artists" | "songs";
 };
 
-const timeRangeOptions = [
+const TIME_RANGE_OPTIONS = [
   { value: "short_term", label: "Last month", shortLabel: "Month" },
   { value: "medium_term", label: "Last 6 months", shortLabel: "6 Months" },
   { value: "long_term", label: "All time", shortLabel: "All Time" },
 ] as const;
 
-export const TimeRangeButtons = ({
-  currentTimeRange,
-}: TimeRangeButtonsProps) => {
+export const TimeRangeButtons = ({ currentTimeRange, section }: TimeRangeButtonsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const utils = api.useUtils();
 
   const handleTimeRangeChange = (timeRange: string) => {
-    void utils.songs.getTopSongs.prefetch({
-      limit: 50,
-      timeRange: timeRange as TimeRange,
-    });
+    const input = { limit: 50, timeRange: timeRange as TimeRange };
+    if (section === "artists") {
+      void utils.artists.getTopArtists.prefetch(input);
+    } else {
+      void utils.songs.getTopSongs.prefetch(input);
+    }
 
     const params = new URLSearchParams(searchParams);
     params.set("timeRange", timeRange);
-    router.push(`/songs?${params.toString()}`);
+    router.push(`/${section}?${params.toString()}`);
   };
 
   return (
     <div className="flex gap-2">
-      {timeRangeOptions.map((option) => (
+      {TIME_RANGE_OPTIONS.map((option) => (
         <Button
           key={option.value}
           onClick={() => handleTimeRangeChange(option.value)}
@@ -59,4 +60,4 @@ export const TimeRangeButtons = ({
       ))}
     </div>
   );
-}; 
+};

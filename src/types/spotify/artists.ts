@@ -63,9 +63,7 @@ export type ArtistsTableProps = {
 export type ArtistCardProps = {
   artist: Artist;
   rank: number;
-  formatFollowers: (followers: number) => string;
-  getPopularityColor: (popularity: number) => string;
-  getPopularityStars: (popularity: number) => React.ReactElement[];
+  details?: ArtistDetails;
 };
 
 // Schemas
@@ -80,10 +78,22 @@ export const GetArtistDetailsInput = z.object({
   artistId: z.string().min(1),
 });
 
-export interface TopArtistsResult {
-  artists: Artist[];
-}
+export const GetArtistsDetailsInput = z.object({
+  artistIds: z.array(z.string().min(1)).min(1).max(50),
+});
 
-export interface ArtistDetailsResult {
+export type SpotifyArtistsResponse = {
+  artists: SpotifyArtistDetails[];
+};
+
+export type TopArtistsResult = {
+  artists: Artist[];
+};
+
+export type ArtistDetailsResult = {
   artist: ArtistDetails;
-}
+};
+
+export type ArtistsDetailsResult = {
+  artists: ArtistDetails[];
+};

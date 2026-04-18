@@ -1,48 +1,29 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Button } from "vib/components/ui/button";
-import { getPopularityColor } from "vib/lib/colours";
-import type { SongsTableProps } from "vib/types/spotify/songs";
 import { SongCard } from "vib/components/songs/SongCard";
+import type { SongsTableProps } from "vib/types/spotify/songs";
+
+const ITEMS_PER_PAGE = 12;
 
 export const SongsTable = ({ songs }: SongsTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const itemsPerPage = 12;
-  const totalPages = Math.ceil(songs.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentSongs = songs.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(songs.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentSongs = songs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const goToPage = (page: number) => {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-  };
-
-  const getPopularityStars = (popularity: number) => {
-    const stars = Math.ceil(popularity / 20);
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`h-3 w-3 ${
-          i < stars ? "fill-current text-emerald-400" : "text-gray-600"
-        }`}
-      />
-    ));
   };
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-2 sm:gap-2 md:gap-4 md:grid-cols-2 lg:grid-cols-3">
         {currentSongs.map((song, index) => (
-          <SongCard
-            key={song.id}
-            song={song}
-            rank={startIndex + index + 1}
-            getPopularityColor={getPopularityColor}
-            getPopularityStars={getPopularityStars}
-          />
+          <SongCard key={song.id} song={song} rank={startIndex + index + 1} />
         ))}
       </div>
 
@@ -59,21 +40,19 @@ export const SongsTable = ({ songs }: SongsTableProps) => {
           </Button>
 
           <div className="flex items-center gap-1">
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-              (page) => (
-                <button
-                  key={`page-${page}`}
-                  onClick={() => goToPage(page)}
-                  className={`h-8 w-8 rounded-md text-sm font-medium transition-all ${
-                    currentPage === page
-                      ? "bg-emerald-500 text-black"
-                      : "text-gray-400 hover:bg-gray-800 hover:text-white"
-                  }`}
-                >
-                  {page}
-                </button>
-              ),
-            )}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={`page-${page}`}
+                onClick={() => goToPage(page)}
+                className={`h-8 w-8 rounded-md text-sm font-medium transition-all ${
+                  currentPage === page
+                    ? "bg-emerald-500 text-black"
+                    : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
           </div>
 
           <Button

@@ -1,12 +1,15 @@
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "vib/server/api/trpc";
 
+const SPOTIFY_API_BASE = "https://api.spotify.com/v1";
+const SPOTIFY_REQUEST_TIMEOUT_MS = 15_000;
+
 export const spotifyApiRequest = async <T>(
   accessToken: string,
   endpoint: string,
   params?: Record<string, string | number>,
 ): Promise<T> => {
-  const url = new URL(`https://api.spotify.com/v1${endpoint}`);
+  const url = new URL(`${SPOTIFY_API_BASE}${endpoint}`);
 
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
@@ -19,15 +22,12 @@ export const spotifyApiRequest = async <T>(
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
+    signal: AbortSignal.timeout(SPOTIFY_REQUEST_TIMEOUT_MS),
   });
 
   if (!response.ok) {
-    const errorData = (await response.json().catch(() => ({}))) as Record<
-      string,
-      unknown
-    >;
+    const errorData = (await response.json().catch(() => ({}))) as Record<string, unknown>;
 
-    // Check for token expiration (401 Unauthorized)
     if (response.status === 401) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
@@ -36,17 +36,14 @@ export const spotifyApiRequest = async <T>(
       });
     }
 
-    // Check for forbidden access (403 Forbidden)
     if (response.status === 403) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message:
-          "Access forbidden. Your account may not have the required permissions.",
+        message: "Access forbidden. Your account may not have the required permissions.",
         cause: errorData,
       });
     }
 
-    // Check for rate limiting (429 Too Many Requests)
     if (response.status === 429) {
       throw new TRPCError({
         code: "TOO_MANY_REQUESTS",
@@ -55,7 +52,6 @@ export const spotifyApiRequest = async <T>(
       });
     }
 
-    // Handle other client errors (4xx)
     if (response.status >= 400 && response.status < 500) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -64,18 +60,9 @@ export const spotifyApiRequest = async <T>(
       });
     }
 
-    // Handle server errors (5xx)
-    if (response.status >= 500) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: `Spotify API server error: ${response.status} ${response.statusText}`,
-        cause: errorData,
-      });
-    }
-
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
-      message: `Spotify API error: ${response.status} ${response.statusText}`,
+      message: `Spotify API server error: ${response.status} ${response.statusText}`,
       cause: errorData,
     });
   }
@@ -88,20 +75,13 @@ export const generalRouter = createTRPCRouter({
     const accessToken = ctx.session.user.accessToken;
 
     if (!accessToken) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "No access token available",
-      });
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "No access token available" });
     }
 
-    try {
-      const data = await spotifyApiRequest<{
-        id: string;
-        display_name: string;
-      }>(accessToken, "/me");
-      return { success: true, user: data };
-    } catch (error) {
-      throw error;
-    }
+    const data = await spotifyApiRequest<{ id: string; display_name: string }>(
+      accessToken,
+      "/me",
+    );
+    return { success: true, user: data };
   }),
 });

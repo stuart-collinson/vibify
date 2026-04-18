@@ -2,25 +2,12 @@
 
 import { ExternalLink, Users } from "lucide-react";
 import Image from "next/image";
-import { api } from "vib/trpc/react";
+import { formatFollowers } from "vib/lib/utils";
+import { getPopularityColor } from "vib/lib/colours";
+import { PopularityStars } from "vib/components/shared/PopularityStars";
 import type { ArtistCardProps } from "vib/types/spotify/artists";
 
-export const ArtistCard = ({
-  artist,
-  rank,
-  formatFollowers,
-  getPopularityColor,
-  getPopularityStars,
-}: ArtistCardProps) => {
-  const { data: artistDetails, isLoading } =
-    api.artists.getArtistDetails.useQuery(
-      { artistId: artist.id },
-      {
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        refetchOnWindowFocus: false,
-      },
-    );
-
+export const ArtistCard = ({ artist, rank, details }: ArtistCardProps) => {
   return (
     <div className="group relative overflow-hidden rounded-xl border border-gray-800 bg-gray-900/50 p-2.5 pt-4 sm:p-3 sm:pt-3 md:p-6 lg:p-8 transition-all duration-300 hover:border-emerald-500/30 hover:bg-gray-900/70">
       <a
@@ -46,11 +33,7 @@ export const ArtistCard = ({
               rank <= 3 ? "bg-emerald-500" : "bg-gray-700/80"
             }`}
           >
-            <span
-              className={`text-xs font-bold ${
-                rank <= 3 ? "text-black" : "text-white"
-              }`}
-            >
+            <span className={`text-xs font-bold ${rank <= 3 ? "text-black" : "text-white"}`}>
               {rank}
             </span>
           </div>
@@ -67,50 +50,40 @@ export const ArtistCard = ({
         <div className="mb-0.5 sm:mb-1 md:mb-2 flex items-center justify-center gap-0.5 sm:gap-1 md:gap-2">
           <span className="text-xs text-gray-400 sm:hidden">Pop</span>
           <span className="hidden sm:inline text-xs sm:text-sm text-gray-400">Popularity</span>
-          <span
-            className={`text-xs sm:text-sm font-semibold ${getPopularityColor(artist.popularity)}`}
-          >
+          <span className={`text-xs sm:text-sm font-semibold ${getPopularityColor(artist.popularity)}`}>
             {artist.popularity}{artist.popularity >= 90 && "★"}
           </span>
         </div>
-        <div className="flex justify-center gap-0.5 sm:gap-1">
-          {getPopularityStars(artist.popularity)}
-        </div>
+        <PopularityStars popularity={artist.popularity} />
       </div>
 
-      {isLoading ? (
-        <div className="mb-1.5 sm:mb-2 md:mb-4 flex items-center justify-center gap-0.5 sm:gap-1 md:gap-2">
-          <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 animate-spin rounded-full border border-emerald-400/30 border-t-emerald-400"></div>
-          <span className="text-xs text-gray-500">Loading...</span>
-        </div>
-      ) : artistDetails?.artist ? (
+      {details && (
         <div className="mb-1.5 sm:mb-2 md:mb-4">
           <div className="mb-0.5 sm:mb-1 flex items-center justify-center gap-0.5 sm:gap-1">
             <Users className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 text-emerald-400/60" />
             <span className="text-xs text-gray-400">Followers</span>
           </div>
           <p className="text-center text-xs sm:text-sm font-semibold text-white">
-            {formatFollowers(artistDetails.artist.followers)}
+            {formatFollowers(details.followers)}
           </p>
         </div>
-      ) : null}
+      )}
 
-      {artistDetails?.artist?.genres &&
-        artistDetails.artist.genres.length > 0 && (
-          <div className="mb-1.5 sm:mb-2 md:mb-4">
-            <p className="mb-0.5 sm:mb-1 md:mb-2 text-center text-xs text-gray-400">Genres</p>
-            <div className="flex flex-wrap justify-center gap-0.5 sm:gap-1">
-              {artistDetails.artist.genres.slice(0, 2).map((genre, index) => (
-                <span
-                  key={index}
-                  className="rounded-full bg-emerald-500/20 px-0.5 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 text-xs text-emerald-400 line-clamp-1"
-                >
-                  {genre}
-                </span>
-              ))}
-            </div>
+      {details?.genres && details.genres.length > 0 && (
+        <div className="mb-1.5 sm:mb-2 md:mb-4">
+          <p className="mb-0.5 sm:mb-1 md:mb-2 text-center text-xs text-gray-400">Genres</p>
+          <div className="flex flex-wrap justify-center gap-0.5 sm:gap-1">
+            {details.genres.slice(0, 2).map((genre, index) => (
+              <span
+                key={index}
+                className="rounded-full bg-emerald-500/20 px-0.5 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 text-xs text-emerald-400 line-clamp-1"
+              >
+                {genre}
+              </span>
+            ))}
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 };

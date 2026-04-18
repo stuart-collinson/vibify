@@ -48,8 +48,6 @@ export type SongsTableProps = {
 export type SongCardProps = {
   song: Song;
   rank: number;
-  getPopularityColor: (popularity: number) => string;
-  getPopularityStars: (popularity: number) => React.ReactElement[];
 };
 
 // Schemas
@@ -60,6 +58,6 @@ export const GetTopSongsInput = z.object({
     .default("medium_term"),
 });
 
-export interface TopSongsResult {
+export type TopSongsResult = {
   songs: Song[];
-}
+};

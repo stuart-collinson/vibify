@@ -6,42 +6,21 @@ import { WelcomeMessage } from "vib/components/dashboard/WelcomeMessage";
 import { api } from "vib/trpc/react";
 import { Skeleton } from "vib/components/ui/skeleton";
 import { useSession } from "next-auth/react";
-import { useTrpcErrorHandler } from "vib/hooks/useTrpcErrorHandler";
 
 export const DashboardClient = () => {
   const { data: session } = useSession();
   const { name: usersName, image: usersImage } = session?.user ?? {};
 
-  const {
-    data: shortTermArtists,
-    isLoading: shortTermArtistsLoading,
-    error: shortTermArtistsError,
-  } = api.artists.getTopArtists.useQuery({
-    limit: 50,
-    timeRange: "short_term",
-  });
+  const { data: shortTermArtists, isLoading: shortTermArtistsLoading } =
+    api.artists.getTopArtists.useQuery({ limit: 50, timeRange: "short_term" });
 
-  const {
-    data: shortTermSongs,
-    isLoading: shortTermSongsLoading,
-    error: shortTermSongsError,
-  } = api.songs.getTopSongs.useQuery({
-    limit: 50,
-    timeRange: "short_term",
-  });
+  const { data: shortTermSongs, isLoading: shortTermSongsLoading } =
+    api.songs.getTopSongs.useQuery({ limit: 50, timeRange: "short_term" });
 
-  const {
-    data: playlistsResponse,
-    isLoading: playlistsLoading,
-    error: playlistsError,
-  } = api.playlists.getPlaylistCount.useQuery();
+  const { data: playlistsResponse, isLoading: playlistsLoading } =
+    api.playlists.getPlaylistCount.useQuery();
 
-  useTrpcErrorHandler(shortTermArtistsError);
-  useTrpcErrorHandler(shortTermSongsError);
-  useTrpcErrorHandler(playlistsError);
-
-  const isLoading =
-    shortTermArtistsLoading || shortTermSongsLoading || playlistsLoading;
+  const isLoading = shortTermArtistsLoading || shortTermSongsLoading || playlistsLoading;
 
   if (isLoading) {
     return (
