@@ -3,20 +3,19 @@
 import { Component, type ReactNode } from "react";
 import { signOut } from "next-auth/react";
 import { toast } from "sonner";
+import { isAuthError } from "vib/lib/utils";
 
-interface Props {
+type Props = {
   children: ReactNode;
-}
+};
 
-interface State {
+type State = {
   hasError: boolean;
   error?: Error;
-}
+};
 
 export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
-    hasError: false,
-  };
+  public state: State = { hasError: false };
 
   public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
@@ -25,38 +24,17 @@ export class ErrorBoundary extends Component<Props, State> {
   public componentDidCatch(error: Error) {
     console.error("ErrorBoundary caught an error:", error);
 
-    // Check if it's a tRPC error
-    if (error.message.includes("TRPC") || error.message.includes("tRPC")) {
-      toast.error(
-        "A connection error occurred. Please try refreshing the page.",
-      );
-      return;
-    }
-
-    // Check if it's a network error
-    if (error.message.includes("fetch") || error.message.includes("network")) {
-      toast.error("Network error. Please check your connection and try again.");
-      return;
-    }
-
-    // Check if it's an authentication error
-    if (
-      error.message.includes("401") ||
-      error.message.includes("UNAUTHORIZED")
-    ) {
+    if (isAuthError(error)) {
       toast.error("Session expired. Please log in again.");
       void signOut({ callbackUrl: "/" });
       return;
     }
 
-    // Check if it's a forbidden error
-    if (error.message.includes("403") || error.message.includes("FORBIDDEN")) {
-      toast.error("Access denied. You may not have the required permissions.");
-      void signOut({ callbackUrl: "/" });
+    if (error.message.includes("fetch") || error.message.includes("network")) {
+      toast.error("Network error. Please check your connection and try again.");
       return;
     }
 
-    // Generic error
     toast.error("Something went wrong. Please try refreshing the page.");
   }
 
@@ -65,12 +43,9 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex min-h-screen items-center justify-center bg-black">
           <div className="text-center">
-            <h1 className="mb-4 text-2xl font-bold text-white">
-              Oops! Something went wrong
-            </h1>
+            <h1 className="mb-4 text-2xl font-bold text-white">Oops! Something went wrong</h1>
             <p className="mb-6 text-gray-400">
-              We encountered an unexpected error. Please try refreshing the
-              page.
+              We encountered an unexpected error. Please try refreshing the page.
             </p>
             <button
               onClick={() => {
