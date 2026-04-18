@@ -1,29 +1,20 @@
 "use client";
 
 import { SongsTable } from "vib/components/songs/SongsTable";
-import { TimeRangeButtons } from "vib/components/songs/TimeRangeButtons";
-import { BackButton } from "vib/components/songs/BackButton";
+import { TimeRangeButtons } from "vib/components/shared/TimeRangeButtons";
+import { BackButton } from "vib/components/shared/BackButton";
 import { api } from "vib/trpc/react";
 import { Skeleton } from "vib/components/ui/skeleton";
 import type { TimeRange } from "vib/types/global";
 import { useSearchParams } from "next/navigation";
-import { useTrpcErrorHandler } from "vib/hooks/useTrpcErrorHandler";
-
 export const SongsClient = () => {
   const searchParams = useSearchParams();
-  const timeRange =
-    (searchParams.get("timeRange") as TimeRange) ?? "short_term";
+  const timeRange = (searchParams.get("timeRange") as TimeRange) ?? "short_term";
 
-  const {
-    data: songResponse,
-    isLoading,
-    error,
-  } = api.songs.getTopSongs.useQuery({
+  const { data: songResponse, isLoading } = api.songs.getTopSongs.useQuery({
     limit: 50,
     timeRange,
   });
-
-  useTrpcErrorHandler(error);
 
   if (isLoading) {
     return (
@@ -36,7 +27,7 @@ export const SongsClient = () => {
           <Skeleton className="h-5 w-80" />
         </div>
 
-        <TimeRangeButtons currentTimeRange={timeRange} />
+        <TimeRangeButtons currentTimeRange={timeRange} section="songs" />
 
         <div className="mt-8 space-y-3">
           {Array.from({ length: 10 }).map((_, i) => (
@@ -57,7 +48,7 @@ export const SongsClient = () => {
         <p className="text-gray-400">Discover your most listened to songs</p>
       </div>
 
-      <TimeRangeButtons currentTimeRange={timeRange} />
+      <TimeRangeButtons currentTimeRange={timeRange} section="songs" />
 
       <div className="mt-8">
         <SongsTable key={timeRange} songs={songResponse?.songs ?? []} />

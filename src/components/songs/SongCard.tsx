@@ -2,14 +2,11 @@
 
 import { ExternalLink, Music } from "lucide-react";
 import Image from "next/image";
+import { getPopularityColor } from "vib/lib/colours";
+import { PopularityStars } from "vib/components/shared/PopularityStars";
 import type { SongCardProps } from "vib/types/spotify/songs";
 
-export const SongCard = ({
-  song,
-  rank,
-  getPopularityColor,
-  getPopularityStars,
-}: SongCardProps) => {
+export const SongCard = ({ song, rank }: SongCardProps) => {
   return (
     <div className="group relative overflow-hidden rounded-xl border border-gray-800 bg-gray-900/50 p-2.5 pt-4 sm:p-3 sm:pt-3 md:p-6 lg:p-6 transition-all duration-300 hover:border-emerald-500/30 hover:bg-gray-900/70">
       <a
@@ -35,11 +32,7 @@ export const SongCard = ({
               rank <= 3 ? "bg-emerald-500" : "bg-gray-700/80"
             }`}
           >
-            <span
-              className={`text-xs font-bold ${
-                rank <= 3 ? "text-black" : "text-white"
-              }`}
-            >
+            <span className={`text-xs font-bold ${rank <= 3 ? "text-black" : "text-white"}`}>
               {rank}
             </span>
           </div>
@@ -71,15 +64,11 @@ export const SongCard = ({
         <div className="mb-0.5 sm:mb-1 md:mb-2 flex items-center justify-center gap-0.5 sm:gap-1 md:gap-2">
           <span className="text-xs text-gray-400 sm:hidden">Pop</span>
           <span className="hidden sm:inline text-xs sm:text-sm text-gray-400">Popularity</span>
-          <span
-            className={`text-xs sm:text-sm font-semibold ${getPopularityColor(song.popularity)}`}
-          >
+          <span className={`text-xs sm:text-sm font-semibold ${getPopularityColor(song.popularity)}`}>
             {song.popularity}{song.popularity >= 90 && "★"}
           </span>
         </div>
-        <div className="flex justify-center gap-0.5 sm:gap-1">
-          {getPopularityStars(song.popularity)}
-        </div>
+        <PopularityStars popularity={song.popularity} />
       </div>
     </div>
   );

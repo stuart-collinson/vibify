@@ -4,7 +4,7 @@ import { QueryClientProvider, type QueryClient } from "@tanstack/react-query";
 import { httpBatchStreamLink, loggerLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SuperJSON from "superjson";
 import { type AppRouter } from "vib/server/api/root";
 import { createQueryClient } from "./query-client";
@@ -25,6 +25,7 @@ export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
+  const signOutInProgress = useRef(false);
 
   const [trpcClient] = useState(() =>
     api.createClient({
@@ -42,58 +43,42 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             headers.set("x-trpc-source", "nextjs-react");
             return headers;
           },
-          fetch: (url, options) => {
-            return fetch(url, {
-              ...options,
-              signal: AbortSignal.timeout(10000),
-            });
-          },
+          fetch: (url, options) =>
+            fetch(url, { ...options, signal: AbortSignal.timeout(10_000) }),
         }),
       ],
     }),
   );
 
-  useState(() => {
-    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
-      if (
-        event?.type === "updated" &&
-        event.query.state.status === "error" &&
-        event.query.state.error
-      ) {
-        const error = event.query.state.error as { data?: { code?: string } };
-        const errorCode = error?.data?.code;
+  useEffect(() => {
+    return queryClient.getQueryCache().subscribe((event) => {
+      if (event?.type !== "updated" || event.query.state.status !== "error") return;
 
-        // Handle authentication errors
-        if (errorCode === "UNAUTHORIZED") {
-          toast.error("Session expired. Please log in again.");
-          void signOut({ callbackUrl: "/" });
-          return;
-        }
+      const error = event.query.state.error as { data?: { code?: string } };
+      const errorCode = error?.data?.code;
 
-        // Handle forbidden errors
-        if (errorCode === "FORBIDDEN") {
-          toast.error(
-            "Access denied. You may not have the required permissions.",
-          );
-          void signOut({ callbackUrl: "/" });
-          return;
-        }
+      if (errorCode === "UNAUTHORIZED" || errorCode === "FORBIDDEN") {
+        if (signOutInProgress.current) return;
+        signOutInProgress.current = true;
+        toast.error(
+          errorCode === "UNAUTHORIZED"
+            ? "Session expired. Please log in again."
+            : "Access denied. You may not have the required permissions.",
+        );
+        void signOut({ callbackUrl: "/" });
+        return;
+      }
 
-        // Handle rate limiting
-        if (errorCode === "TOO_MANY_REQUESTS") {
-          toast.error(
-            "Rate limit exceeded. Please try again in a few minutes.",
-          );
-          return;
-        }
+      if (errorCode === "TOO_MANY_REQUESTS") {
+        toast.error("Rate limit exceeded. Please try again in a few minutes.");
+        return;
+      }
 
-        // Handle other errors silently (they'll be handled by individual components)
-        console.warn("Unhandled tRPC error:", error);
+      if (errorCode === "INTERNAL_SERVER_ERROR") {
+        toast.error("Something went wrong. Please try again later.");
       }
     });
-
-    return unsubscribe;
-  });
+  }, [queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -104,8 +89,8 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
   );
 }
 
-function getBaseUrl() {
+const getBaseUrl = () => {
   if (typeof window !== "undefined") return window.location.origin;
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return `http://127.0.0.1:${process.env.PORT ?? 3000}`;
-}
+};
