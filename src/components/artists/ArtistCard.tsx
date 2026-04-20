@@ -69,21 +69,19 @@ export const ArtistCard = ({ artist, rank, details }: ArtistCardProps) => {
         </div>
       )}
 
-      {details?.genres && details.genres.length > 0 && (
-        <div className="mb-1.5 sm:mb-2 md:mb-4">
-          <p className="mb-0.5 sm:mb-1 md:mb-2 text-center text-xs text-gray-400">Genres</p>
-          <div className="flex flex-wrap justify-center gap-0.5 sm:gap-1">
-            {details.genres.slice(0, 2).map((genre, index) => (
-              <span
-                key={index}
-                className="rounded-full bg-emerald-500/20 px-0.5 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 text-xs text-emerald-400 line-clamp-1"
-              >
-                {genre}
-              </span>
-            ))}
-          </div>
+      <div className={`mb-1.5 sm:mb-2 md:mb-4 ${!details?.genres?.length ? "invisible" : ""}`}>
+        <p className="mb-0.5 sm:mb-1 md:mb-2 text-center text-xs text-gray-400">Genres</p>
+        <div className="flex flex-wrap justify-center gap-0.5 sm:gap-1">
+          {(details?.genres ?? ["placeholder", "placeholder"]).slice(0, 2).map((genre, index) => (
+            <span
+              key={index}
+              className="rounded-full bg-emerald-500/20 px-0.5 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 text-xs text-emerald-400 line-clamp-1"
+            >
+              {genre}
+            </span>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };

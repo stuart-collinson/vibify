@@ -19,8 +19,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable} dark bg-black`}>
-      <body className="bg-black">
+    <html lang="en" className={`${geist.variable} dark`} style={{ backgroundColor: "oklch(0.13 0.028 261.692)" }}>
+      <body className="bg-background">
         <Providers>
           <ErrorBoundary>
             {children}
